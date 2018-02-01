@@ -56,21 +56,17 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void navIconColor(int color) {
-        toggle.getDrawerArrowDrawable().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-    }
-
-    @Override
     public void navMenuItems(List<String> menuItems) {
         Menu menu = binding.navigation.getMenu();
         newsSubMenu = menu.addSubMenu("News Sources");
+        menu.setGroupCheckable(newsSubMenu.getItem().getGroupId(), true, true);
         newsSubMenu.clear();
         if (menuItems != null) {
             for (int i = 0; i < menuItems.size(); i++) {
                 newsSubMenu.add(i, Menu.FIRST + i, Menu.FIRST + 1, menuItems.get(i));
-
             }
         }
+        newsSubMenu.getItem(0).setChecked(true);
     }
 
     @Override
@@ -78,12 +74,33 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         for (int i = 0; i < newsSubMenu.size(); i++) {
             if (id == newsSubMenu.getItem(i).getItemId()) {
+                newsSubMenu.getItem(i).setChecked(true);
                 if (navController.getRssFragment() != null) {
                     navController.getRssFragment().changeNewsPage(i);
                 }
+            } else {
+                newsSubMenu.getItem(i).setChecked(false);
             }
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    @Override
+    public void navIconColor(int color) {
+        toggle.getDrawerArrowDrawable().mutate().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        for (int i = 0; i < newsSubMenu.size(); i++) {
+            if (i == position) {
+                newsSubMenu.getItem(i).setChecked(true);
+            } else {
+                newsSubMenu.getItem(i).setChecked(false);
+            }
+        }
+    }
+
 }

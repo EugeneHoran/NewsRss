@@ -131,6 +131,9 @@ public class RssParentFragment extends Fragment implements TabLayout.OnTabSelect
     private ViewPager.SimpleOnPageChangeListener simpleOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            if (listener != null) {
+                listener.onPageSelected(position);
+            }
             boolean isSwipeRight = position + positionOffset > swipeRightOffset;
             swipeRightOffset = position + positionOffset;
             if (positionOffset == 0) {

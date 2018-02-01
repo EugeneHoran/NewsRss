@@ -11,4 +11,6 @@ public interface NewsCallbacks {
     void navIconColor(int color);
 
     void navMenuItems(List<String> menuItems);
+
+    void onPageSelected(int position);
 }
