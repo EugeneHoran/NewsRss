@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="link"
+            type="eugene.com.newsrss.db.entities.NewsStationLinks" />
+    </data>
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:checked="@{link.checked}"
+        android:drawablePadding="12dp"
+        android:enabled="@{!link.primary}"
+        android:layoutDirection="rtl"
+        android:paddingLeft="48dp"
+        android:paddingRight="16dp"
+        android:text="@{link.title, default = Test}"
+        tools:ignore="RtlHardcoded" />
+</layout>

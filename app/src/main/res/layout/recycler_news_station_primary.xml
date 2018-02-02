@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="listener"
+            type="eugene.com.newsrss.ui.interfaces.StationsListCallbacks" />
+
+        <variable
+            name="station"
+            type="eugene.com.newsrss.db.entities.NewsStation" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="48dp"
+        android:onClick="@{() -> listener.stationSelected(station)}">
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:checked="@{station.show}"
+            android:drawablePadding="12dp"
+            android:layoutDirection="rtl"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="@{station.title}" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/checkbox"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager">
+
+        </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
+</layout>
