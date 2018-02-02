@@ -23,8 +23,33 @@ public class NewsStation implements Parcelable {
     private String urlSecondary = null;
     private String urlSecondaryTitle = null;
     private NewsStationView newsStationView;
+    @Ignore
+    private int position;
+
+    @Ignore
+    public int getPosition() {
+        return position;
+    }
+
+    @Ignore
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     public NewsStation() {
+    }
+
+    @Ignore
+    public NewsStation(NewsStation newsStation) {
+        this.id = newsStation.getId();
+        this.show = !newsStation.isShow();
+        this.title = newsStation.getTitle();
+        this.newsStationLinks = newsStation.getNewsStationLinks();
+        this.urlPrimary = newsStation.getUrlPrimary();
+        this.urlSecondary = newsStation.getUrlSecondary();
+        this.urlPrimaryTitle = newsStation.getUrlPrimaryTitle();
+        this.urlSecondaryTitle = newsStation.getUrlSecondaryTitle();
+        this.newsStationView = newsStation.getNewsStationView();
     }
 
     @Ignore

@@ -1,6 +1,7 @@
 package eugene.com.newsrss.db.entities;
 
 
+import android.arch.persistence.room.Ignore;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,6 +10,17 @@ public class NewsStationLinks implements Parcelable {
     private String url;
     private boolean primary;
     private boolean checked;
+
+    @Ignore
+    @Override
+    public String toString() {
+        return "NewsStationLinks{" +
+                "title='" + title + '\'' +
+                ", url='" + url + '\'' +
+                ", primary=" + primary +
+                ", checked=" + checked +
+                '}';
+    }
 
     public NewsStationLinks(String title, String url, boolean primary) {
         this.title = title;

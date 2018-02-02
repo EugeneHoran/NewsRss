@@ -8,18 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eugene.com.newsrss.databinding.RecyclerNewsStationLinksBinding;
+import eugene.com.newsrss.db.entities.NewsStation;
 import eugene.com.newsrss.db.entities.NewsStationLinks;
 import eugene.com.newsrss.ui.common.BaseViewHolder;
 
 public class NewsSourcesLinksRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private List<NewsStationLinks> linkList = new ArrayList<>();
 
-    public void setLinkList(List<NewsStationLinks> linkList) {
-        if (linkList == null) {
+    public void setNewsStation(NewsStation newsStation) {
+        if (newsStation == null || newsStation.getNewsStationLinks() == null) {
             return;
         }
         this.linkList.clear();
-        this.linkList.addAll(linkList);
+        this.linkList.addAll(newsStation.getNewsStationLinks());
         notifyDataSetChanged();
     }
 

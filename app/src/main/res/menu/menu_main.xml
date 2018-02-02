@@ -2,5 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="eugene.com.newsrss.ui.MainActivity">
-
+    <item
+        android:id="@+id/action_filter"
+        android:checkable="false"
+        android:icon="@drawable/ic_filter_list"
+        android:title="Filter News"
+        app:showAsAction="always" />
 </menu>

@@ -22,7 +22,7 @@ public class RssParentFragmentViewModel extends AndroidViewModel {
     public RssParentFragmentViewModel(@NonNull Application application) {
         super(application);
         NewsDatabase newsDatabase = ((RssApplication) application).getNewsDatabase();
-        mediatorNewsStationList.addSource(newsDatabase.getNewsStationDao().getNewsStations(), newsStationList -> {
+        mediatorNewsStationList.addSource(newsDatabase.getNewsStationDao().getNewsStationsSelected(), newsStationList -> {
             if (newsStationList != null && newsStationList.size() > 0) {
                 initNewsData(newsStationList);
             }

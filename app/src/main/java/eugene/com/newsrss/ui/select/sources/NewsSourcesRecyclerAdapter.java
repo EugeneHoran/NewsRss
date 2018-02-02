@@ -1,6 +1,7 @@
 package eugene.com.newsrss.ui.select.sources;
 
 
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import eugene.com.newsrss.databinding.RecyclerNewsStationPrimaryBinding;
 import eugene.com.newsrss.db.entities.NewsStation;
 import eugene.com.newsrss.ui.common.BaseViewHolder;
 import eugene.com.newsrss.ui.interfaces.StationsListCallbacks;
+import eugene.com.newsrss.util.StationsDiffUtil;
 
 public class NewsSourcesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private StationsListCallbacks listener;
@@ -21,13 +23,14 @@ public class NewsSourcesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHol
         this.listener = listener;
     }
 
-    void setNewsStationList(List<NewsStation> newsStationList) {
+    void setNewsStationList(List<NewsStation> newNewsStationList) {
         if (newsStationList == null) {
             return;
         }
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new StationsDiffUtil(newsStationList, newNewsStationList));
         this.newsStationList.clear();
-        this.newsStationList.addAll(newsStationList);
-        notifyDataSetChanged();
+        this.newsStationList.addAll(newNewsStationList);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @Override

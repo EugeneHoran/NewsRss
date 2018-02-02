@@ -5,5 +5,6 @@
     <string name="latest_stories">Latest Stories</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="continue_text">CONTINUE</string>
 
 </resources>

@@ -12,10 +12,12 @@
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/checkbox"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="32dp"
         android:checked="@{link.checked}"
+        android:drawableLeft="@drawable/circle"
         android:drawablePadding="12dp"
         android:enabled="@{!link.primary}"
+        android:foreground="?attr/selectableItemBackground"
         android:layoutDirection="rtl"
         android:paddingLeft="48dp"
         android:paddingRight="16dp"

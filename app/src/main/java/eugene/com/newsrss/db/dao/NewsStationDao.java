@@ -19,6 +19,9 @@ public abstract class NewsStationDao {
     @Query("SELECT * FROM news_stations")
     public abstract LiveData<List<NewsStation>> getNewsStations();
 
+    @Query("SELECT * FROM news_stations WHERE show = 1")
+    public abstract LiveData<List<NewsStation>> getNewsStationsSelected();
+
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(List<NewsStation> newsStationList);
@@ -26,4 +29,9 @@ public abstract class NewsStationDao {
     @Transaction
     @Update(onConflict = OnConflictStrategy.REPLACE)
     public abstract void update(List<NewsStation> newsStationList);
+
+
+    @Transaction
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void update(NewsStation newsStationList);
 }

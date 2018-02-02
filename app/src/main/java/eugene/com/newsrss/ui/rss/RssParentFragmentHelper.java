@@ -8,10 +8,6 @@ import java.util.List;
 import eugene.com.newsrss.db.entities.NewsStation;
 import eugene.com.newsrss.db.entities.NewsStationView;
 
-/**
- * Created by Eugene on 2/2/2018.
- */
-
 public class RssParentFragmentHelper {
     private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     private List<NewsStation> newsStationList = new ArrayList<>();

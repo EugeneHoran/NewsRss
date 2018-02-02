@@ -27,7 +27,6 @@ class NewsStationDataGenerator {
     List<NewsStation> getInitNewsStationList() {
         List<NewsStation> newsList = new ArrayList<>();
         // CNN
-        List<NewsStationLinks> cnnLinks = new ArrayList<>();
         newsList.add(cnn());
         // FOX
         newsList.add(fox());
