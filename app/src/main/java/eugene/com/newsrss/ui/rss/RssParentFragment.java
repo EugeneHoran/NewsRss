@@ -1,6 +1,5 @@
 package eugene.com.newsrss.ui.rss;
 
-import android.animation.ArgbEvaluator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -18,23 +17,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import eugene.com.newsrss.R;
 import eugene.com.newsrss.databinding.FragmentRssParentBinding;
-import eugene.com.newsrss.db.entities.NewsStation;
 import eugene.com.newsrss.db.entities.NewsStationView;
 import eugene.com.newsrss.ui.interfaces.NewsCallbacks;
+import eugene.com.newsrss.ui.rss.adapters.RssPagerAdapter;
 
 public class RssParentFragment extends Fragment implements TabLayout.OnTabSelectedListener, AppBarLayout.OnOffsetChangedListener {
     private static final String STATE_PAGER_PAGE = "state_pager_page";
     private static final String STATE_APP_BAR_EXPANDED = "state_app_bar_expanded";
     private NewsCallbacks listener;
-    private RssParentViewModel model;
+    private RssParentFragmentViewModel model;
     private FragmentRssParentBinding binding;
     private RssPagerAdapter adapter;
-    private RssParentHelper rssParentHelper;
+    private RssParentFragmentHelper rssParentHelper;
     private int[] logos;
     private Window window;
     private float swipeRightOffset;
@@ -54,8 +50,8 @@ public class RssParentFragment extends Fragment implements TabLayout.OnTabSelect
         if (getActivity() != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window = getActivity().getWindow();
         }
-        rssParentHelper = new RssParentHelper();
-        model = ViewModelProviders.of(this).get(RssParentViewModel.class);
+        rssParentHelper = new RssParentFragmentHelper();
+        model = ViewModelProviders.of(this).get(RssParentFragmentViewModel.class);
         adapter = new RssPagerAdapter(getChildFragmentManager());
     }
 
@@ -91,7 +87,7 @@ public class RssParentFragment extends Fragment implements TabLayout.OnTabSelect
         super.onSaveInstanceState(outState);
     }
 
-    private void observeNewsStations(RssParentViewModel model) {
+    private void observeNewsStations(RssParentFragmentViewModel model) {
         model.getNewsStationList().observe(this, newsStationList -> {
             if (newsStationList != null) {
                 rssParentHelper.setList(newsStationList);
@@ -102,7 +98,7 @@ public class RssParentFragment extends Fragment implements TabLayout.OnTabSelect
         });
     }
 
-    private void observePagerLogos(RssParentViewModel model) {
+    private void observePagerLogos(RssParentFragmentViewModel model) {
         model.getPagerLogos().observe(this, pagerLogos -> {
             if (pagerLogos != null && pagerLogos.length > 0) {
                 logos = pagerLogos;
@@ -110,7 +106,7 @@ public class RssParentFragment extends Fragment implements TabLayout.OnTabSelect
         });
     }
 
-    private void observeNavigationMenuItems(RssParentViewModel model) {
+    private void observeNavigationMenuItems(RssParentFragmentViewModel model) {
         model.getNavigationMenuItem().observe(this, menuItemList -> {
             if (menuItemList != null) {
                 listener.navMenuItems(menuItemList);
@@ -203,38 +199,5 @@ public class RssParentFragment extends Fragment implements TabLayout.OnTabSelect
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
     }
-
-    class RssParentHelper {
-        private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
-        private List<NewsStation> newsStationList = new ArrayList<>();
-
-        RssParentHelper() {
-        }
-
-        public void setList(List<NewsStation> newsStationList) {
-            this.newsStationList.clear();
-            this.newsStationList.addAll(newsStationList);
-        }
-
-        NewsStationView getColorsFormatted(int adapterCount, int position, float positionOffset) {
-            NewsStationView colorsNews;
-            if (position < (adapterCount - 1) && position < (newsStationList.size() - 1)) {
-                NewsStationView newsStationView = newsStationList.get(position).getNewsStationView();
-                NewsStationView newsStationViewNext = newsStationList.get(position + 1).getNewsStationView();
-                colorsNews = new NewsStationView(
-                        (Integer) argbEvaluator.evaluate(positionOffset, newsStationView.getColorPrimary(), newsStationViewNext.getColorPrimary()),
-                        (Integer) argbEvaluator.evaluate(positionOffset, newsStationView.getColorPrimaryDark(), newsStationViewNext.getColorPrimaryDark()),
-                        (Integer) argbEvaluator.evaluate(positionOffset, newsStationView.getColorAccent(), newsStationViewNext.getColorAccent())
-                );
-            } else {
-                NewsStationView newsStationView = newsStationList.get(newsStationList.size() - 1).getNewsStationView();
-                colorsNews = new NewsStationView(
-                        newsStationView.getColorPrimary(),
-                        newsStationView.getColorPrimaryDark(),
-                        newsStationView.getColorAccent()
-                );
-            }
-            return colorsNews;
-        }
-    }
 }
+

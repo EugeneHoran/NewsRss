@@ -2,7 +2,7 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorBackground">@color/colorBackground</item>
     </style>
@@ -11,10 +11,16 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <!--Selector Fragment-->
+    <style name="AppTheme.PopupOverlayWhite" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AppTheme.AppBarOverlayWhite" parent="ThemeOverlay.AppCompat.ActionBar" />
+
+    <!--Rss Fragment-->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="colorPrimary">@android:color/transparent</item>
     </style>
+
 </resources>

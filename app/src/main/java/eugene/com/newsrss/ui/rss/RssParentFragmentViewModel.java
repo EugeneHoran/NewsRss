@@ -14,12 +14,12 @@ import eugene.com.newsrss.RssApplication;
 import eugene.com.newsrss.db.NewsDatabase;
 import eugene.com.newsrss.db.entities.NewsStation;
 
-public class RssParentViewModel extends AndroidViewModel {
+public class RssParentFragmentViewModel extends AndroidViewModel {
     private MediatorLiveData<List<NewsStation>> mediatorNewsStationList = new MediatorLiveData<>();
     private MutableLiveData<List<String>> navigationMenuItem = new MutableLiveData<>();
     private MutableLiveData<int[]> pagerLogos = new MutableLiveData<>();
 
-    public RssParentViewModel(@NonNull Application application) {
+    public RssParentFragmentViewModel(@NonNull Application application) {
         super(application);
         NewsDatabase newsDatabase = ((RssApplication) application).getNewsDatabase();
         mediatorNewsStationList.addSource(newsDatabase.getNewsStationDao().getNewsStations(), newsStationList -> {

@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
 import eugene.com.newsrss.db.entities.NewsStation;
-import eugene.com.newsrss.ui.rss.RssViewModel;
+import eugene.com.newsrss.ui.rss.RssFragmentViewModel;
 
 
 public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
@@ -22,8 +22,8 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass.isAssignableFrom(RssViewModel.class)) {
-            return (T) new RssViewModel(application, news);
+        if (modelClass.isAssignableFrom(RssFragmentViewModel.class)) {
+            return (T) new RssFragmentViewModel(application, news);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

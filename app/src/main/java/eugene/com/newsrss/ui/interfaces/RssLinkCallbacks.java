@@ -1,5 +1,7 @@
 package eugene.com.newsrss.ui.interfaces;
 
-public interface RssLinkCallbacks {
+import eugene.com.newsrss.ui.common.BaseInterface;
+
+public interface RssLinkCallbacks extends BaseInterface {
     void onLinkClicked(String urlLink);
 }

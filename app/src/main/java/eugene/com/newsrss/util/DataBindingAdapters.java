@@ -1,6 +1,9 @@
 package eugene.com.newsrss.util;
 
 import android.databinding.BindingAdapter;
+import android.graphics.PorterDuff;
+import android.os.Build;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,8 +32,21 @@ public class DataBindingAdapters {
     }
 
     @BindingAdapter("textColor")
-    public static void setTextColor(TextView view, int color) {
-        view.setTextColor(color);
+    public static void setTextColor(View view, int color) {
+        if (view instanceof TextView) {
+            ((TextView) view).setTextColor(color);
+        }
     }
 
+    @BindingAdapter("backgroundColor")
+    public static void setBackgroundColor(View view, int color) {
+        view.setBackgroundColor(color);
+    }
+
+    @BindingAdapter("checkBoxColor")
+    public static void setCheckBoxColor(AppCompatCheckBox view, int color) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            view.getButtonDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        }
+    }
 }

@@ -16,10 +16,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import eugene.com.newsrss.R;
 import eugene.com.newsrss.databinding.FragmentRssBinding;
 import eugene.com.newsrss.db.entities.NewsStation;
 import eugene.com.newsrss.ui.interfaces.RssLinkCallbacks;
+import eugene.com.newsrss.ui.rss.adapters.RssPrimaryRecyclerAdapter;
+import eugene.com.newsrss.ui.rss.adapters.RssSecondaryRecyclerAdapter;
 import eugene.com.newsrss.util.ViewModelFactory;
 
 public class RssFragment extends Fragment implements RssLinkCallbacks {
@@ -37,7 +41,7 @@ public class RssFragment extends Fragment implements RssLinkCallbacks {
     }
 
     private NewsStation news;
-    private RssViewModel model;
+    private RssFragmentViewModel model;
     private RssPrimaryRecyclerAdapter adapterPrimary;
     private RssSecondaryRecyclerAdapter adapterSecondary;
     private DividerItemDecoration decoration;
@@ -50,7 +54,7 @@ public class RssFragment extends Fragment implements RssLinkCallbacks {
             news = getArguments().getParcelable(ARG_RSS_NEWS);
         }
         if (getActivity() != null) {
-            model = ViewModelProviders.of(this, new ViewModelFactory((Application) getActivity().getApplicationContext(), news)).get(RssViewModel.class);
+            model = ViewModelProviders.of(this, new ViewModelFactory((Application) getActivity().getApplicationContext(), news)).get(RssFragmentViewModel.class);
             decoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
         }
         adapterPrimary = new RssPrimaryRecyclerAdapter(this);
@@ -82,28 +86,24 @@ public class RssFragment extends Fragment implements RssLinkCallbacks {
         super.onViewCreated(view, savedInstanceState);
         binding.recyclerPrimary.setAdapter(adapterPrimary);
         binding.recyclerSecondary.setAdapter(adapterSecondary);
-        observeSecondaryNews(model);
-        observePrimaryNews(model);
+        observePrimaryData(model);
+        observeSecondaryData(model);
         binding.nestedScroll.scrollTo(0, 0);
     }
 
-    private void observePrimaryNews(RssViewModel model) {
-        model.getPrimaryNews().observe(this, rssResponseApiResponse -> {
-            if (rssResponseApiResponse != null && rssResponseApiResponse.body != null) {
-                adapterPrimary.setItemList(rssResponseApiResponse.body.getItems());
-                binding.nestedScroll.scrollTo(0, 0);
-            }
-        });
+    private void observePrimaryData(RssFragmentViewModel model) {
+        model.getPrimaryData().observe(this, response ->
+                adapterPrimary.setItemList(
+                        response != null && response.data != null ?
+                                response.data.getItems() : new ArrayList<>()));
     }
 
-    private void observeSecondaryNews(RssViewModel model) {
-        if (news.getUrlSecondary() != null) {
-            model.getSecondaryNews().observe(this, rssResponseApiResponse -> {
-                if (rssResponseApiResponse != null && rssResponseApiResponse.body != null) {
-                    adapterSecondary.setItemList(rssResponseApiResponse.body.getItems());
-                    binding.nestedScroll.scrollTo(0, 0);
-                }
-            });
+    private void observeSecondaryData(RssFragmentViewModel model) {
+        if (model.getSecondaryData() != null) {
+            model.getSecondaryData().observe(this, response ->
+                    adapterSecondary.setItemList(
+                            response != null && response.data != null ?
+                                    response.data.getItems() : new ArrayList<>()));
         }
     }
 

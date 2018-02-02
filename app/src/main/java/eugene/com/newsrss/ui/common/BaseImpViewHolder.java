@@ -12,5 +12,5 @@ public abstract class BaseImpViewHolder extends RecyclerView.ViewHolder {
         super(binding.getRoot());
     }
 
-    public abstract void bindView(Item item, RssLinkCallbacks listener);
+    public abstract void bindView(Object object, BaseInterface listener);
 }

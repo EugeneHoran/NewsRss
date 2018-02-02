@@ -11,6 +11,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RssClient {
+    private static final int TIMEOUT = 15;
     private static RssClient instance = null;
 
     public static RssClient getInstance() {
@@ -32,9 +33,9 @@ public class RssClient {
 
     private OkHttpClient http3Client() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(45, TimeUnit.SECONDS);
-        builder.writeTimeout(45, TimeUnit.SECONDS);
-        builder.readTimeout(45, TimeUnit.SECONDS);
+        builder.connectTimeout(TIMEOUT, TimeUnit.SECONDS);
+        builder.writeTimeout(TIMEOUT, TimeUnit.SECONDS);
+        builder.readTimeout(TIMEOUT, TimeUnit.SECONDS);
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(loggingInterceptor());
         }

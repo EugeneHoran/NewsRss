@@ -15,6 +15,10 @@ public class RssApplication extends Application {
         appExecutors = new AppExecutors();
     }
 
+    public AppExecutors getAppExecutors() {
+        return appExecutors;
+    }
+
     public NewsDatabase getNewsDatabase() {
         return NewsDatabase.getInstance(this, appExecutors);
     }

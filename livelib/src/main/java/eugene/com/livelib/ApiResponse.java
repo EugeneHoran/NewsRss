@@ -16,13 +16,10 @@
 
 package eugene.com.livelib;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
-import okhttp3.HttpUrl;
 import retrofit2.Response;
 
 /**
@@ -30,26 +27,20 @@ import retrofit2.Response;
  *
  * @param <T>
  */
-@SuppressWarnings("all")
 public class ApiResponse<T> {
-    private static final Pattern LINK_PATTERN = Pattern.compile("<([^>]*)>[\\s]*;[\\s]*rel=\"([a-zA-Z0-9]+)\"");
-    private static final Pattern PAGE_PATTERN = Pattern.compile("\\bpage=(\\d+)");
-    private static final String NEXT_LINK = "next";
     public final int code;
     @Nullable
     public final T body;
     @Nullable
-    public final String errorMessage;
-    @NonNull
-    public String nextPage;
+    final String errorMessage;
 
-    public ApiResponse(Throwable error) {
+    ApiResponse(Throwable error) {
         code = 500;
         body = null;
         errorMessage = error.getMessage();
     }
 
-    public ApiResponse(Response<T> response) {
+    ApiResponse(Response<T> response) {
         code = response.code();
         if (response.isSuccessful()) {
             body = response.body();
@@ -60,7 +51,7 @@ public class ApiResponse<T> {
                 try {
                     message = response.errorBody().string();
                 } catch (IOException ignored) {
-//                    Timber.e(ignored, "error while parsing response");
+                    message = "Unknown Error...";
                 }
             }
             if (message == null || message.trim().length() == 0) {
@@ -69,21 +60,9 @@ public class ApiResponse<T> {
             errorMessage = message;
             body = null;
         }
-        HttpUrl url = response.raw().request().url();
-        if (url != null && url.queryParameterValues("page") != null && url.queryParameterValues("page").size() > 0) {
-            nextPage = url.queryParameterValues("page").get(0).toString();
-        }
     }
 
-    public boolean isSuccessful() {
+    boolean isSuccessful() {
         return code >= 200 && code < 300;
-    }
-
-    public Integer getNextPage() {
-        try {
-            return Integer.parseInt(nextPage) + 1;
-        } catch (NumberFormatException ex) {
-            return null;
-        }
     }
 }

@@ -1,4 +1,4 @@
-package eugene.com.newsrss.ui.rss;
+package eugene.com.newsrss.ui.rss.adapters;
 
 
 import android.support.annotation.Nullable;
@@ -9,16 +9,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.List;
 
 import eugene.com.newsrss.db.entities.NewsStation;
+import eugene.com.newsrss.ui.rss.RssFragment;
 
 public class RssPagerAdapter extends FragmentPagerAdapter {
     private List<NewsStation> newsStationList;
     private Fragment[] fragments;
 
-    RssPagerAdapter(FragmentManager fm) {
+    public RssPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    void setNewsList(List<NewsStation> newsStationList) {
+    public void setNewsList(List<NewsStation> newsStationList) {
         this.newsStationList = newsStationList;
         notifyDataSetChanged();
     }

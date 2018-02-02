@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,8 +33,9 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
         binding = DataBindingUtil.setContentView(this, R.layout.activity_news);
         navController = new NavigationController(getSupportFragmentManager());
         binding.navigation.setNavigationItemSelectedListener(this);
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
         if (savedInstanceState == null) {
-            navController.navToRss();
+            navController.navToSelectNewsSource();
         }
     }
 
@@ -67,6 +69,7 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
             }
         }
         newsSubMenu.getItem(0).setChecked(true);
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.START);
     }
 
     @Override

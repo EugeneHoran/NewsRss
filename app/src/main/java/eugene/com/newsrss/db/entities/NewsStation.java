@@ -7,6 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity(tableName = "news_stations")
@@ -16,6 +17,7 @@ public class NewsStation implements Parcelable {
     private String id;
     private boolean show;
     private String title;
+    private List<NewsStationLinks> newsStationLinks;
     private String urlPrimary;
     private String urlPrimaryTitle;
     private String urlSecondary = null;
@@ -28,6 +30,7 @@ public class NewsStation implements Parcelable {
     @Ignore
     public NewsStation(
             String title,
+            List<NewsStationLinks> newsStationLinks,
             String urlLatestNews,
             String urlSecondary,
             String urlPrimaryTitle,
@@ -35,7 +38,9 @@ public class NewsStation implements Parcelable {
             NewsStationView newsStationView
     ) {
         this.id = UUID.randomUUID().toString();
+        this.show = true;
         this.title = title;
+        this.newsStationLinks = newsStationLinks;
         this.urlPrimary = urlLatestNews;
         this.urlSecondary = urlSecondary;
         this.urlPrimaryTitle = urlPrimaryTitle;
@@ -66,6 +71,14 @@ public class NewsStation implements Parcelable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public List<NewsStationLinks> getNewsStationLinks() {
+        return newsStationLinks;
+    }
+
+    public void setNewsStationLinks(List<NewsStationLinks> newsStationLinks) {
+        this.newsStationLinks = newsStationLinks;
     }
 
     public String getUrlPrimary() {
@@ -108,6 +121,7 @@ public class NewsStation implements Parcelable {
         this.newsStationView = newsStationView;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -118,6 +132,7 @@ public class NewsStation implements Parcelable {
         dest.writeString(this.id);
         dest.writeByte(this.show ? (byte) 1 : (byte) 0);
         dest.writeString(this.title);
+        dest.writeTypedList(this.newsStationLinks);
         dest.writeString(this.urlPrimary);
         dest.writeString(this.urlPrimaryTitle);
         dest.writeString(this.urlSecondary);
@@ -129,6 +144,7 @@ public class NewsStation implements Parcelable {
         this.id = in.readString();
         this.show = in.readByte() != 0;
         this.title = in.readString();
+        this.newsStationLinks = in.createTypedArrayList(NewsStationLinks.CREATOR);
         this.urlPrimary = in.readString();
         this.urlPrimaryTitle = in.readString();
         this.urlSecondary = in.readString();
@@ -136,7 +152,7 @@ public class NewsStation implements Parcelable {
         this.newsStationView = in.readParcelable(NewsStationView.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<NewsStation> CREATOR = new Parcelable.Creator<NewsStation>() {
+    public static final Creator<NewsStation> CREATOR = new Creator<NewsStation>() {
         @Override
         public NewsStation createFromParcel(Parcel source) {
             return new NewsStation(source);
