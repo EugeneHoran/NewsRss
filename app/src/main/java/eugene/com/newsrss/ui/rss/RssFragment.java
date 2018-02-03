@@ -68,7 +68,6 @@ public class RssFragment extends Fragment implements RssLinkCallbacks {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_rss, container, false);
         binding.setTextColor(news.getNewsStationView().getTextColor());
-        binding.setHasTopNews(false);
         binding.recyclerPrimary.addItemDecoration(decoration);
         binding.setTitlePrimary(news.getUrlPrimaryTitle());
         binding.setTitleSecondary(news.getUrlSecondaryTitle());

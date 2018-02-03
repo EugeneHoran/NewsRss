@@ -34,9 +34,9 @@ public class DataBindingAdapters {
     public static void bindVisibility(View view, Boolean show) {
         if (show == null) {
             view.setVisibility(View.GONE);
-        } else {
-            view.setVisibility(show ? View.VISIBLE : View.GONE);
+            return;
         }
+        view.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @BindingAdapter("newsDrawableLift")

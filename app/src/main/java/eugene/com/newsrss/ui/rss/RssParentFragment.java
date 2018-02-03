@@ -1,6 +1,5 @@
 package eugene.com.newsrss.ui.rss;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -12,24 +11,20 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.ColorUtils;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import java.util.List;
-
 import eugene.com.newsrss.R;
 import eugene.com.newsrss.databinding.FragmentRssParentBinding;
-import eugene.com.newsrss.db.entities.NewsStation;
 import eugene.com.newsrss.db.entities.NewsStationView;
 import eugene.com.newsrss.ui.interfaces.NewsCallbacks;
-import eugene.com.newsrss.ui.interfaces.RssPageChangeCallbacks;
 import eugene.com.newsrss.ui.rss.adapters.RssPagerAdapter;
-import eugene.com.newsrss.util.RssPageChangeListener;
-import eugene.com.newsrss.util.SimpleOnTabSelectedListener;
 
 public class RssParentFragment extends Fragment implements
+        TabLayout.OnTabSelectedListener,
         AppBarLayout.OnOffsetChangedListener {
 
     private static final String STATE_PAGER_PAGE = "state_pager_page";
@@ -38,8 +33,8 @@ public class RssParentFragment extends Fragment implements
     private NewsCallbacks listener;
     private RssParentFragmentViewModel model;
     private FragmentRssParentBinding binding;
-    private RssPageChangeListener rssPageChangeListener;
     private RssPagerAdapter adapter;
+    private RssParentFragmentHelper rssParentHelper;
     private int[] logos;
     private Window window;
     private boolean appBarIsExpanded = true;
@@ -52,12 +47,18 @@ public class RssParentFragment extends Fragment implements
         return new RssParentFragment();
     }
 
+
+    public View getView() {
+        return binding.appBar;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getActivity() != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window = getActivity().getWindow();
         }
+        rssParentHelper = new RssParentFragmentHelper();
         model = ViewModelProviders.of(this).get(RssParentFragmentViewModel.class);
         adapter = new RssPagerAdapter(getChildFragmentManager());
         if (savedInstanceState != null) {
@@ -79,10 +80,12 @@ public class RssParentFragment extends Fragment implements
         super.onViewCreated(view, savedInstanceState);
         binding.pager.setAdapter(adapter);
         binding.tabs.setupWithViewPager(binding.pager);
-        binding.tabs.addOnTabSelectedListener(simpleOnTabSelectedListener);
+        binding.pager.addOnPageChangeListener(simpleOnPageChangeListener);
+        binding.tabs.addOnTabSelectedListener(this);
         binding.appBar.addOnOffsetChangedListener(this);
-        observeDataChanges(model);
-
+        observeNewsStations(model);
+        observePagerLogos(model);
+        observeNavigationMenuItems(model);
     }
 
     @Override
@@ -92,116 +95,97 @@ public class RssParentFragment extends Fragment implements
         super.onSaveInstanceState(outState);
     }
 
-    public View getView() {
-        return binding.appBar;
-    }
-
-    /**
-     * Observe data changes
-     *
-     * @param model RssParentFragmentViewModel.class
-     */
-    private void observeDataChanges(RssParentFragmentViewModel model) {
-        // station list
-        model.getNewsStationList().observe(this, this::initNewsStationList);
-        // station logos
-        model.getPagerLogos().observe(this, pagerLogos -> {
-            logos = pagerLogos;
-            rssPageChangeListener = new RssPageChangeListener(binding.pager, rssPageChangeCallbacks);
-            getLifecycle().addObserver(rssPageChangeListener);
+    private void observeNewsStations(RssParentFragmentViewModel model) {
+        model.getNewsStationList().observe(this, newsStationList -> {
+            if (newsStationList != null) {
+                rssParentHelper.setList(newsStationList);
+                adapter.setNewsList(newsStationList);
+                binding.pager.setCurrentItem(pagerPage);
+                binding.appBar.setExpanded(appBarIsExpanded);
+            }
         });
-//        model.getPagerLogos().observe(this, pagerLogos -> logos = pagerLogos);
-        // nav menu logo list
-        model.getNavigationMenuItem().observe(this, menuItemList ->
-                listener.initNavDrawerMenuItems(menuItemList));
     }
 
-    /**
-     * Init views based on List<NewsStation> data changes
-     *
-     * @param newsStationList list of news stations
-     */
-    private void initNewsStationList(@NonNull List<NewsStation> newsStationList) {
-        binding.tabs.setVisibility(newsStationList.size() == 1 ? View.GONE : View.VISIBLE);
-        rssPageChangeListener.setNewsStationList(newsStationList);
-        adapter.setNewsList(newsStationList);
-        binding.pager.setCurrentItem(pagerPage);
-        binding.appBar.setExpanded(appBarIsExpanded);
+    private void observePagerLogos(RssParentFragmentViewModel model) {
+        model.getPagerLogos().observe(this, pagerLogos -> {
+            if (pagerLogos != null && pagerLogos.length > 0) {
+                logos = pagerLogos;
+            }
+        });
     }
 
-    /**
-     * Handle View changes on pager adapter changes
-     */
-    private RssPageChangeCallbacks rssPageChangeCallbacks = new RssPageChangeCallbacks() {
-        @Override
-        public void setToolbarLogo(int position) {
-            if (logos != null) {
-                binding.toolbarLogo.setImageResource(logos[position]);
+    private void observeNavigationMenuItems(RssParentFragmentViewModel model) {
+        model.getNavigationMenuItem().observe(this, menuItemList -> {
+            if (menuItemList != null) {
+                binding.tabs.setVisibility(menuItemList.size() == 1 ? View.GONE : View.VISIBLE);
+                listener.initNavDrawerMenuItems(menuItemList);
             }
-        }
+        });
+    }
 
-        @Override
-        public void setToolbarLogoAlpha(float alpha) {
-            binding.toolbarLogo.setAlpha(alpha);
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            listener.onPageSelected(position);
-        }
-
-        @Override
-        public void onPageColorChange(NewsStationView newsStationView) {
-            if (newsStationView == null) {
-                return;
-            }
-            if (getActivity() != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                window.setStatusBarColor(newsStationView.getColorPrimaryDark());
-            }
-            listener.navIconColor(newsStationView.getColorAccent());
-            binding.appBar.setBackgroundColor(newsStationView.getColorPrimary());
-            binding.tabs.setSelectedTabIndicatorColor(newsStationView.getColorAccent());
-            binding.tabs.setTabTextColors(ColorUtils.setAlphaComponent(newsStationView.getColorAccent(), 180), newsStationView.getColorAccent());
-        }
-
-        @Override
-        public void expandAppBar() {
-            binding.appBar.setExpanded(true, true);
-        }
-    };
-    /**
-     * Tab selected listener
-     * Change pager page without animation
-     */
-    private SimpleOnTabSelectedListener simpleOnTabSelectedListener = new SimpleOnTabSelectedListener() {
-        @Override
-        public void onTabSelected(TabLayout.Tab tab) {
-            changeNewsPage(tab.getPosition(), false);
-        }
-    };
-
-    /**
-     * Save state of appBar expanded
-     */
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
         appBarIsExpanded = (verticalOffset == 0);
     }
 
-    /**
-     * Change pager page
-     *
-     * @param position pager pos
-     * @param animate  animate page change
-     */
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        changeNewsPage(tab.getPosition(), false);
+    }
+
+    float swipeRightOffset;
+
+    private ViewPager.SimpleOnPageChangeListener simpleOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            boolean isSwipeRight = position + positionOffset > swipeRightOffset;
+            swipeRightOffset = position + positionOffset;
+            boolean scrollPastHalf = positionOffset >= 0.5f;
+
+            // set nav item selected
+            listener.onPageSelected(position);
+
+            if (positionOffset == 0) {
+                binding.toolbarLogo.setImageResource(logos[position]);
+            } else {
+//                binding.toolbarLogo.setImageResource(scrollPastHalf && isSwipeRight ? logos[position + 1] : logos[position]);
+
+                if (scrollPastHalf) {
+                    if (isSwipeRight) {
+                        binding.toolbarLogo.setImageResource(logos[position + 1]);
+                    }
+                    binding.toolbarLogo.setAlpha((Math.abs(positionOffset) * 2) - 1.0f);
+                } else {
+                    if (!isSwipeRight) {
+                        binding.toolbarLogo.setImageResource(logos[position]);
+                    }
+                    binding.toolbarLogo.setAlpha(1.0f - (Math.abs(positionOffset) * 2));
+                }
+            }
+            initColorChange(rssParentHelper.getColorsFormatted(adapter.getCount(), position, positionOffset));
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            binding.appBar.setExpanded(true, true);
+        }
+    };
+
     public void changeNewsPage(int position, boolean animate) {
         binding.appBar.setExpanded(true, true);
         binding.pager.setCurrentItem(position, animate);
     }
 
-    /**
-     * Init interface callbacks
-     */
+    private void initColorChange(NewsStationView newsLogoAndColors) {
+        if (getActivity() != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(newsLogoAndColors.getColorPrimaryDark());
+        }
+        listener.navIconColor(newsLogoAndColors.getColorAccent());
+        binding.appBar.setBackgroundColor(newsLogoAndColors.getColorPrimary());
+        binding.tabs.setSelectedTabIndicatorColor(newsLogoAndColors.getColorAccent());
+        binding.tabs.setTabTextColors(ColorUtils.setAlphaComponent(newsLogoAndColors.getColorAccent(), 180), newsLogoAndColors.getColorAccent());
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -213,13 +197,22 @@ public class RssParentFragment extends Fragment implements
         }
     }
 
-    /**
-     * Remove interface callbacks
-     */
     @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    /**
+     * Not Used
+     */
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
     }
 }
 
