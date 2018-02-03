@@ -13,7 +13,8 @@
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlayWhite">
+            android:theme="@style/AppTheme.AppBarOverlayWhite"
+            android:transitionName="app_bar">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

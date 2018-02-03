@@ -12,10 +12,12 @@ public class RssApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        appExecutors = new AppExecutors();
     }
 
     public AppExecutors getAppExecutors() {
+        if (appExecutors == null) {
+            appExecutors = new AppExecutors();
+        }
         return appExecutors;
     }
 

@@ -78,7 +78,7 @@ public class NewsSourcesFragment extends Fragment implements StationsListCallbac
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean(Constants.SP_NEWS_INITIATED, true);
             editor.apply();
-            listener.navToRss();
+            listener.navToRss(binding.appBar);
         }
     }
 

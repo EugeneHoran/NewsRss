@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 
 import java.util.List;
 
@@ -63,14 +65,14 @@ public class NewsActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_filter) {
-            navController.navToSelectNewsSource();
+            navController.navToSelectNewsSource(navController.getRssFragment().getView());
         }
         return true;
     }
 
     @Override
-    public void navToRss() {
-        navController.navToRss();
+    public void navToRss(View view) {
+        navController.navToRss(view);
     }
 
     @Override
@@ -121,7 +123,7 @@ public class NewsActivity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_filter) {
-            navController.navToSelectNewsSource();
+            navController.navToSelectNewsSource(navController.getRssFragment().getView());
             return true;
         }
         for (int i = 0; i < newsSubMenu.size(); i++) {
@@ -148,7 +150,10 @@ public class NewsActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPageSelected(int position) {
+    public void onPageSelected(@Nullable Integer position) {
+        if (position == null || newsSubMenu == null) {
+            return;
+        }
         for (int i = 0; i < newsSubMenu.size(); i++) {
             if (i == position) {
                 newsSubMenu.getItem(i).setChecked(true);

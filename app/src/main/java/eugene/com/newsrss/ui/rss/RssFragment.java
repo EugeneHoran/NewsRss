@@ -68,10 +68,10 @@ public class RssFragment extends Fragment implements RssLinkCallbacks {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_rss, container, false);
         binding.setTextColor(news.getNewsStationView().getTextColor());
+        binding.setHasTopNews(false);
         binding.recyclerPrimary.addItemDecoration(decoration);
         binding.setTitlePrimary(news.getUrlPrimaryTitle());
         binding.setTitleSecondary(news.getUrlSecondaryTitle());
-        binding.setHasTopNews(news.getUrlSecondary() != null);
         binding.recyclerPrimary.setFocusable(false);
         binding.recyclerSecondary.setFocusable(false);
         binding.recyclerSecondary.setNestedScrollingEnabled(false);
@@ -100,10 +100,12 @@ public class RssFragment extends Fragment implements RssLinkCallbacks {
 
     private void observeSecondaryData(RssFragmentViewModel model) {
         if (model.getSecondaryData() != null) {
-            model.getSecondaryData().observe(this, response ->
-                    adapterSecondary.setItemList(
-                            response != null && response.data != null ?
-                                    response.data.getItems() : new ArrayList<>()));
+            model.getSecondaryData().observe(this, response -> {
+                adapterSecondary.setItemList(
+                        response != null && response.data != null ?
+                                response.data.getItems() : new ArrayList<>());
+                binding.setHasTopNews(news.getUrlSecondary() != null);
+            });
         }
     }
 

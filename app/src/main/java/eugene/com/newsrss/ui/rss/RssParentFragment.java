@@ -1,5 +1,6 @@
 package eugene.com.newsrss.ui.rss;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -78,11 +79,10 @@ public class RssParentFragment extends Fragment implements
         super.onViewCreated(view, savedInstanceState);
         binding.pager.setAdapter(adapter);
         binding.tabs.setupWithViewPager(binding.pager);
-        rssPageChangeListener = new RssPageChangeListener(binding.pager, rssPageChangeCallbacks);
-        getLifecycle().addObserver(rssPageChangeListener);
         binding.tabs.addOnTabSelectedListener(simpleOnTabSelectedListener);
         binding.appBar.addOnOffsetChangedListener(this);
         observeDataChanges(model);
+
     }
 
     @Override
@@ -90,6 +90,10 @@ public class RssParentFragment extends Fragment implements
         outState.putBoolean(STATE_APP_BAR_EXPANDED, appBarIsExpanded);
         outState.putInt(STATE_PAGER_PAGE, binding.pager.getCurrentItem());
         super.onSaveInstanceState(outState);
+    }
+
+    public View getView() {
+        return binding.appBar;
     }
 
     /**
@@ -101,7 +105,12 @@ public class RssParentFragment extends Fragment implements
         // station list
         model.getNewsStationList().observe(this, this::initNewsStationList);
         // station logos
-        model.getPagerLogos().observe(this, pagerLogos -> logos = pagerLogos);
+        model.getPagerLogos().observe(this, pagerLogos -> {
+            logos = pagerLogos;
+            rssPageChangeListener = new RssPageChangeListener(binding.pager, rssPageChangeCallbacks);
+            getLifecycle().addObserver(rssPageChangeListener);
+        });
+//        model.getPagerLogos().observe(this, pagerLogos -> logos = pagerLogos);
         // nav menu logo list
         model.getNavigationMenuItem().observe(this, menuItemList ->
                 listener.initNavDrawerMenuItems(menuItemList));
@@ -126,7 +135,9 @@ public class RssParentFragment extends Fragment implements
     private RssPageChangeCallbacks rssPageChangeCallbacks = new RssPageChangeCallbacks() {
         @Override
         public void setToolbarLogo(int position) {
-            binding.toolbarLogo.setImageResource(logos[position]);
+            if (logos != null) {
+                binding.toolbarLogo.setImageResource(logos[position]);
+            }
         }
 
         @Override
