@@ -1,5 +1,7 @@
 package eugene.com.newsrss.ui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -24,6 +26,7 @@ import eugene.com.newsrss.ui.common.NavigationController;
 import eugene.com.newsrss.ui.interfaces.NavControllerCallbacks;
 import eugene.com.newsrss.ui.interfaces.NewsCallbacks;
 import eugene.com.newsrss.ui.interfaces.SelectorCallbacks;
+import eugene.com.newsrss.util.Constants;
 
 public class NewsActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -39,12 +42,13 @@ public class NewsActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sp = getPreferences(Context.MODE_PRIVATE);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_news);
         navController = new NavigationController(getSupportFragmentManager(), this);
         binding.navigation.setNavigationItemSelectedListener(this);
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
         if (savedInstanceState == null) {
-            navController.navToSelectNewsSource();
+            navController.initStart(sp.getBoolean(Constants.SP_NEWS_INITIATED, false));
         }
     }
 
@@ -98,17 +102,18 @@ public class NewsActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void navMenuItems(List<String> menuItems) {
+    public void initNavDrawerMenuItems(List<String> menuItems) {
         Menu menu = binding.navigation.getMenu();
-        newsSubMenu = menu.addSubMenu("News Sources");
-        newsSubMenu.clear();
+        if (newsSubMenu != null) {
+            newsSubMenu.clear();
+        }
+        newsSubMenu = menu.addSubMenu(R.string.news_sources);
         menu.setGroupCheckable(newsSubMenu.getItem().getGroupId(), true, true);
         if (menuItems != null) {
             for (int i = 0; i < menuItems.size(); i++) {
                 newsSubMenu.add(i, Menu.FIRST + i, Menu.FIRST + 1, menuItems.get(i));
             }
         }
-        newsSubMenu.getItem(0).setChecked(true);
         menu.findItem(R.id.action_filter).setChecked(false).setCheckable(false);
     }
 
@@ -119,12 +124,11 @@ public class NewsActivity extends AppCompatActivity implements
             navController.navToSelectNewsSource();
             return true;
         }
-
         for (int i = 0; i < newsSubMenu.size(); i++) {
             if (id == newsSubMenu.getItem(i).getItemId()) {
                 newsSubMenu.getItem(i).setChecked(true);
                 if (navController.getRssFragment() != null) {
-                    navController.getRssFragment().changeNewsPage(i);
+                    navController.getRssFragment().changeNewsPage(i, true);
                 }
             } else {
                 newsSubMenu.getItem(i).setChecked(false);
@@ -153,5 +157,4 @@ public class NewsActivity extends AppCompatActivity implements
             }
         }
     }
-
 }

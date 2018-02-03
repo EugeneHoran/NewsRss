@@ -30,6 +30,9 @@ public class RssParentFragmentViewModel extends AndroidViewModel {
     }
 
     private void initNewsData(List<NewsStation> newsList) {
+        if (newsList == null || newsList.size() == 0) {
+            return;
+        }
         // init logos and navigation menu items
         int[] logos = new int[newsList.size()];
         List<String> menuItemList = new ArrayList<>();

@@ -8,9 +8,9 @@ import java.util.List;
 public interface NewsCallbacks {
     void initActionbar(Toolbar toolbar);
 
-    void navIconColor(int color);
+    void initNavDrawerMenuItems(List<String> menuItems);
 
-    void navMenuItems(List<String> menuItems);
+    void navIconColor(int color);
 
     void onPageSelected(int position);
 }

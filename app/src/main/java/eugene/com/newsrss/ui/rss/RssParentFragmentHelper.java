@@ -12,7 +12,7 @@ public class RssParentFragmentHelper {
     private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     private List<NewsStation> newsStationList = new ArrayList<>();
 
-    RssParentFragmentHelper() {
+    public RssParentFragmentHelper() {
     }
 
     public void setList(List<NewsStation> newsStationList) {
@@ -20,7 +20,10 @@ public class RssParentFragmentHelper {
         this.newsStationList.addAll(newsStationList);
     }
 
-    NewsStationView getColorsFormatted(int adapterCount, int position, float positionOffset) {
+    public NewsStationView getColorsFormatted(int adapterCount, int position, float positionOffset) {
+        if (newsStationList == null) {
+            return null;
+        }
         NewsStationView colorsNews;
         if (position < (adapterCount - 1) && position < (newsStationList.size() - 1)) {
             NewsStationView newsStationView = newsStationList.get(position).getNewsStationView();

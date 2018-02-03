@@ -23,6 +23,14 @@ public class NavigationController {
         this.container = R.id.container;
     }
 
+    public void initStart(boolean newsInitiated) {
+        if (newsInitiated) {
+            navToRss();
+        } else {
+            navToSelectNewsSource();
+        }
+    }
+
     public void navToSelectNewsSource() {
         fragmentSelectNewsSource = NewsSourcesFragment.newInstance();
         fm.beginTransaction().replace(container, fragmentSelectNewsSource, TAG_FRAG_SELECTOR).commit();

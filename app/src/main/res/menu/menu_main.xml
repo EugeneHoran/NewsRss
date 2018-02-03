@@ -6,6 +6,6 @@
         android:id="@+id/action_filter"
         android:checkable="false"
         android:icon="@drawable/ic_filter_list"
-        android:title="Filter News"
+        android:title="@string/filter_news"
         app:showAsAction="always" />
 </menu>

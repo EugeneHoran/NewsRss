@@ -1,9 +1,12 @@
 package eugene.com.newsrss.ui.select.sources;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,17 +16,20 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import java.util.List;
 
 import eugene.com.newsrss.R;
 import eugene.com.newsrss.databinding.FragmentSelectNewsSourcesBinding;
 import eugene.com.newsrss.db.entities.NewsStation;
-import eugene.com.newsrss.ui.interfaces.NewsCallbacks;
 import eugene.com.newsrss.ui.interfaces.SelectorCallbacks;
 import eugene.com.newsrss.ui.interfaces.StationsListCallbacks;
+import eugene.com.newsrss.util.Constants;
 
 public class NewsSourcesFragment extends Fragment implements StationsListCallbacks {
+    private Context context;
+    private SharedPreferences sp;
     private NewsSourcesFragmentViewModel model;
     private FragmentSelectNewsSourcesBinding binding;
     private NewsSourcesRecyclerAdapter adapter;
@@ -40,22 +46,22 @@ public class NewsSourcesFragment extends Fragment implements StationsListCallbac
         return new NewsSourcesFragment();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         model = ViewModelProviders.of(this).get(NewsSourcesFragmentViewModel.class);
         adapter = new NewsSourcesRecyclerAdapter(this);
+        sp = getActivity().getPreferences(Context.MODE_PRIVATE);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_select_news_sources, container, false);
-        if (getActivity() != null) {
-            colorDisabled = Color.parseColor("#9E9E9E");
-            colorEnabled = ContextCompat.getColor(getActivity(), R.color.colorAccent);
-            binding.recycler.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        }
+        colorDisabled = Color.parseColor("#9E9E9E");
+        colorEnabled = ContextCompat.getColor(context, R.color.colorAccent);
+        binding.recycler.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
         return binding.getRoot();
     }
 
@@ -63,12 +69,27 @@ public class NewsSourcesFragment extends Fragment implements StationsListCallbac
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.recycler.setAdapter(adapter);
-        binding.btnNext.setOnClickListener(v -> {
-            if (enableBtn) {
-                listener.navToRss();
-            }
-        });
+        binding.btnNext.setOnClickListener(v -> onContinueClicked());
         observeNewsSources(model);
+    }
+
+    private void onContinueClicked() {
+        if (enableBtn) {
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean(Constants.SP_NEWS_INITIATED, true);
+            editor.apply();
+            listener.navToRss();
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getActivity().getWindow();
+            window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
+        }
     }
 
     @Override
@@ -108,6 +129,7 @@ public class NewsSourcesFragment extends Fragment implements StationsListCallbac
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         if (context instanceof SelectorCallbacks) {
             listener = (SelectorCallbacks) context;
         } else {
@@ -121,5 +143,4 @@ public class NewsSourcesFragment extends Fragment implements StationsListCallbac
         super.onDetach();
         listener = null;
     }
-
 }
