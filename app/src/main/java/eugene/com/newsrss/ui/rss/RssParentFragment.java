@@ -39,17 +39,13 @@ public class RssParentFragment extends Fragment implements
     private Window window;
     private boolean appBarIsExpanded = true;
     private int pagerPage = 0;
+    float swipeRightOffset;
 
     public RssParentFragment() {
     }
 
     public static RssParentFragment newInstance() {
         return new RssParentFragment();
-    }
-
-
-    public View getView() {
-        return binding.appBar;
     }
 
     @Override
@@ -84,8 +80,8 @@ public class RssParentFragment extends Fragment implements
         binding.tabs.addOnTabSelectedListener(this);
         binding.appBar.addOnOffsetChangedListener(this);
         observeNewsStations(model);
-        observePagerLogos(model);
-        observeNavigationMenuItems(model);
+//        observePagerLogos(model);
+//        observeNavigationMenuItems(model);
     }
 
     @Override
@@ -104,24 +100,35 @@ public class RssParentFragment extends Fragment implements
                 binding.appBar.setExpanded(appBarIsExpanded);
             }
         });
-    }
-
-    private void observePagerLogos(RssParentFragmentViewModel model) {
-        model.getPagerLogos().observe(this, pagerLogos -> {
+        model.getPagerLogoArray().observe(this, pagerLogos -> {
             if (pagerLogos != null && pagerLogos.length > 0) {
                 logos = pagerLogos;
             }
         });
-    }
-
-    private void observeNavigationMenuItems(RssParentFragmentViewModel model) {
-        model.getNavigationMenuItem().observe(this, menuItemList -> {
+        model.getNavigationMenuList().observe(this, menuItemList -> {
             if (menuItemList != null) {
                 binding.tabs.setVisibility(menuItemList.size() == 1 ? View.GONE : View.VISIBLE);
                 listener.initNavDrawerMenuItems(menuItemList);
             }
         });
     }
+
+//    private void observePagerLogos(RssParentFragmentViewModel model) {
+//        model.getPagerLogoArray().observe(this, pagerLogos -> {
+//            if (pagerLogos != null && pagerLogos.length > 0) {
+//                logos = pagerLogos;
+//            }
+//        });
+//    }
+//
+//    private void observeNavigationMenuItems(RssParentFragmentViewModel model) {
+//        model.getNavigationMenuList().observe(this, menuItemList -> {
+//            if (menuItemList != null) {
+//                binding.tabs.setVisibility(menuItemList.size() == 1 ? View.GONE : View.VISIBLE);
+//                listener.initNavDrawerMenuItems(menuItemList);
+//            }
+//        });
+//    }
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -133,23 +140,16 @@ public class RssParentFragment extends Fragment implements
         changeNewsPage(tab.getPosition(), false);
     }
 
-    float swipeRightOffset;
-
     private ViewPager.SimpleOnPageChangeListener simpleOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             boolean isSwipeRight = position + positionOffset > swipeRightOffset;
             swipeRightOffset = position + positionOffset;
             boolean scrollPastHalf = positionOffset >= 0.5f;
-
-            // set nav item selected
             listener.onPageSelected(position);
-
             if (positionOffset == 0) {
                 binding.toolbarLogo.setImageResource(logos[position]);
             } else {
-//                binding.toolbarLogo.setImageResource(scrollPastHalf && isSwipeRight ? logos[position + 1] : logos[position]);
-
                 if (scrollPastHalf) {
                     if (isSwipeRight) {
                         binding.toolbarLogo.setImageResource(logos[position + 1]);
@@ -184,6 +184,10 @@ public class RssParentFragment extends Fragment implements
         binding.appBar.setBackgroundColor(newsLogoAndColors.getColorPrimary());
         binding.tabs.setSelectedTabIndicatorColor(newsLogoAndColors.getColorAccent());
         binding.tabs.setTabTextColors(ColorUtils.setAlphaComponent(newsLogoAndColors.getColorAccent(), 180), newsLogoAndColors.getColorAccent());
+    }
+
+    public View getSharedView() {
+        return binding.appBar;
     }
 
     @Override

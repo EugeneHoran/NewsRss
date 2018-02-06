@@ -29,6 +29,18 @@ public class RssParentFragmentViewModel extends AndroidViewModel {
         });
     }
 
+    LiveData<List<NewsStation>> getNewsStationList() {
+        return mediatorNewsStationList;
+    }
+
+    LiveData<List<String>> getNavigationMenuList() {
+        return navigationMenuItem;
+    }
+
+    LiveData<int[]> getPagerLogoArray() {
+        return pagerLogos;
+    }
+
     private void initNewsData(List<NewsStation> newsList) {
         if (newsList == null || newsList.size() == 0) {
             return;
@@ -44,17 +56,5 @@ public class RssParentFragmentViewModel extends AndroidViewModel {
         navigationMenuItem.setValue(menuItemList);
         // init rss view pager
         mediatorNewsStationList.setValue(newsList);
-    }
-
-    LiveData<List<NewsStation>> getNewsStationList() {
-        return mediatorNewsStationList;
-    }
-
-    LiveData<int[]> getPagerLogos() {
-        return pagerLogos;
-    }
-
-    LiveData<List<String>> getNavigationMenuItem() {
-        return navigationMenuItem;
     }
 }

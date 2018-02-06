@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class NewsStationLinks implements Parcelable {
+    private int position;
     private String title;
     private String url;
     private boolean primary;
@@ -15,25 +16,38 @@ public class NewsStationLinks implements Parcelable {
     @Override
     public String toString() {
         return "NewsStationLinks{" +
-                "title='" + title + '\'' +
+                "position=" + position +
+                ", title='" + title + '\'' +
                 ", url='" + url + '\'' +
                 ", primary=" + primary +
                 ", checked=" + checked +
                 '}';
     }
 
-    public NewsStationLinks(String title, String url, boolean primary) {
+    @Ignore
+    public NewsStationLinks(int position, String title, String url, boolean primary) {
+        this.position = position;
         this.title = title;
         this.url = url;
         this.primary = primary;
         this.checked = true;
     }
 
-    public NewsStationLinks(String title, String url) {
+    @Ignore
+    public NewsStationLinks(int position, String title, String url) {
+        this.position = position;
         this.title = title;
         this.url = url;
         this.primary = false;
         this.checked = true;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public String getTitle() {
@@ -76,18 +90,22 @@ public class NewsStationLinks implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.position);
         dest.writeString(this.title);
         dest.writeString(this.url);
+        dest.writeByte(this.primary ? (byte) 1 : (byte) 0);
         dest.writeByte(this.checked ? (byte) 1 : (byte) 0);
     }
 
     protected NewsStationLinks(Parcel in) {
+        this.position = in.readInt();
         this.title = in.readString();
         this.url = in.readString();
+        this.primary = in.readByte() != 0;
         this.checked = in.readByte() != 0;
     }
 
-    public static final Parcelable.Creator<NewsStationLinks> CREATOR = new Parcelable.Creator<NewsStationLinks>() {
+    public static final Creator<NewsStationLinks> CREATOR = new Creator<NewsStationLinks>() {
         @Override
         public NewsStationLinks createFromParcel(Parcel source) {
             return new NewsStationLinks(source);

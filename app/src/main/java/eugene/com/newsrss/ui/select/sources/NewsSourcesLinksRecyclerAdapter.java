@@ -10,10 +10,15 @@ import java.util.List;
 import eugene.com.newsrss.databinding.RecyclerNewsStationLinksBinding;
 import eugene.com.newsrss.db.entities.NewsStation;
 import eugene.com.newsrss.db.entities.NewsStationLinks;
-import eugene.com.newsrss.ui.common.BaseViewHolder;
+import eugene.com.newsrss.ui.interfaces.StationLinkChangeCallback;
 
-public class NewsSourcesLinksRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {
+public class NewsSourcesLinksRecyclerAdapter extends RecyclerView.Adapter<NewsSourcesLinksRecyclerAdapter.StationViewHolder> {
     private List<NewsStationLinks> linkList = new ArrayList<>();
+    private StationLinkChangeCallback listener;
+
+    public NewsSourcesLinksRecyclerAdapter(StationLinkChangeCallback listener) {
+        this.listener = listener;
+    }
 
     public void setNewsStation(NewsStation newsStation) {
         if (newsStation == null || newsStation.getNewsStationLinks() == null) {
@@ -25,17 +30,35 @@ public class NewsSourcesLinksRecyclerAdapter extends RecyclerView.Adapter<BaseVi
     }
 
     @Override
-    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new BaseViewHolder(RecyclerNewsStationLinksBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+    public StationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new StationViewHolder(RecyclerNewsStationLinksBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
-    public void onBindViewHolder(BaseViewHolder holder, int position) {
-        holder.bindView(linkList.get(position), null);
+    public void onBindViewHolder(StationViewHolder holder, int position) {
+        holder.bindView(linkList.get(position));
     }
 
     @Override
     public int getItemCount() {
         return linkList.size();
+    }
+
+    class StationViewHolder extends RecyclerView.ViewHolder {
+        RecyclerNewsStationLinksBinding binder;
+
+        StationViewHolder(RecyclerNewsStationLinksBinding binder) {
+            super(binder.getRoot());
+            this.binder = binder;
+        }
+
+        void bindView(NewsStationLinks newsStationLink) {
+            binder.setLink(newsStationLink);
+            binder.checkbox.setOnCheckedChangeListener((view, isChecked) -> {
+                if (newsStationLink.isChecked() != isChecked) {
+                    listener.onStationCheckChange(getAdapterPosition());
+                }
+            });
+        }
     }
 }

@@ -1,6 +1,5 @@
 package eugene.com.newsrss.ui.rss.adapters;
 
-
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -8,23 +7,21 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import eugene.com.newsrss.databinding.RecyclerSecondaryItemBinding;
-import eugene.com.newsrss.databinding.RecyclerSecondaryItemNoImageBinding;
+import eugene.com.newsrss.databinding.RecyclerPrimaryItemBinding;
 import eugene.com.newsrss.model.Item;
 import eugene.com.newsrss.ui.common.BaseViewHolder;
 import eugene.com.newsrss.ui.interfaces.RssLinkCallbacks;
 
-public class RssSecondaryRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {
+public class RssFeedVerticalRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private List<Item> itemList = new ArrayList<>();
     private RssLinkCallbacks listener;
-    private boolean showImage = true;
 
-    public RssSecondaryRecyclerAdapter(RssLinkCallbacks listener, boolean showImage) {
+    RssFeedVerticalRecyclerAdapter(RssLinkCallbacks listener) {
         this.listener = listener;
-        this.showImage = showImage;
     }
 
-    public void setItemList(List<Item> itemList) {
+
+    void setItemList(List<Item> itemList) {
         this.itemList.clear();
         this.itemList.addAll(itemList);
         notifyDataSetChanged();
@@ -32,12 +29,7 @@ public class RssSecondaryRecyclerAdapter extends RecyclerView.Adapter<BaseViewHo
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        if (showImage) {
-            return new BaseViewHolder(RecyclerSecondaryItemBinding.inflate(layoutInflater, parent, false));
-        } else {
-            return new BaseViewHolder(RecyclerSecondaryItemNoImageBinding.inflate(layoutInflater, parent, false));
-        }
+        return new BaseViewHolder(RecyclerPrimaryItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override

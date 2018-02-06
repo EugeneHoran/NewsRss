@@ -38,17 +38,18 @@ public class StationsDiffUtil extends DiffUtil.Callback {
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
         NewsStation oldItem = oldList.get(oldItemPosition);
         NewsStation newItem = newList.get(newItemPosition);
-        if (oldItem.isShow() == newItem.isShow()) {
-            for (int i = 0; i < oldItem.getNewsStationLinks().size(); i++) {
-                NewsStationLinks oldLink = oldItem.getNewsStationLinks().get(i);
-                NewsStationLinks newLink = newItem.getNewsStationLinks().get(i);
-                if (oldLink.isChecked() != newLink.isChecked()) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
+        return oldItem.getId().equals(newItem.getId());
+//        if (oldItem.isShow() == newItem.isShow()) {
+//            for (int i = 0; i < oldItem.getNewsStationLinks().size(); i++) {
+//                NewsStationLinks oldLink = oldItem.getNewsStationLinks().get(i);
+//                NewsStationLinks newLink = newItem.getNewsStationLinks().get(i);
+//                if (oldLink.isChecked() != newLink.isChecked()) {
+//                    return false;
+//                }
+//            }
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 }

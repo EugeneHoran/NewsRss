@@ -65,7 +65,7 @@ public class NewsActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_filter) {
-            navController.navToSelectNewsSource(navController.getRssFragment().getView());
+            navController.navToSelectNewsSource(navController.getRssFragment().getSharedView());
         }
         return true;
     }
@@ -123,7 +123,7 @@ public class NewsActivity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_filter) {
-            navController.navToSelectNewsSource(navController.getRssFragment().getView());
+            navController.navToSelectNewsSource(navController.getRssFragment().getSharedView());
             return true;
         }
         for (int i = 0; i < newsSubMenu.size(); i++) {

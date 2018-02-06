@@ -18,14 +18,6 @@ public class NewsStationView implements Parcelable {
     @ColorInt
     private int textColor;
 
-    public NewsStationView(int logo, int colorPrimary, int colorPrimaryDark, int colorAccent, int textColor) {
-        this.logo = logo;
-        this.colorPrimary = colorPrimary;
-        this.colorPrimaryDark = colorPrimaryDark;
-        this.colorAccent = colorAccent;
-        this.textColor = textColor;
-    }
-
     public NewsStationView(int logo, int[] colors) {
         this.logo = logo;
         this.colorPrimary = colors[0];
