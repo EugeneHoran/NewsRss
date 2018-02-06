@@ -20,7 +20,7 @@ public class RssClient {
         }
         return instance;
     }
-    
+
 
     public RssService create() {
         Retrofit.Builder builder = new Retrofit.Builder();
