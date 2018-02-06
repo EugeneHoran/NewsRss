@@ -19,10 +19,10 @@ import eugene.com.newsrss.db.entities.NewsStationLinks;
 import eugene.com.newsrss.model.NewsDisplayList;
 
 public class RssFragmentViewModel extends AndroidViewModel {
-    private List<NewsDisplayList> newsDisplayLists = new ArrayList<>();
+    private final List<NewsDisplayList> newsDisplayLists = new ArrayList<>();
     private final MutableLiveData<String> linkUrl = new MutableLiveData<>();
-    private MediatorLiveData<List<NewsDisplayList>> displayListMediatorLiveData = new MediatorLiveData<>();
-    private MutableLiveData<Boolean> loading = new MutableLiveData<>();
+    private final MediatorLiveData<List<NewsDisplayList>> displayListMediatorLiveData = new MediatorLiveData<>();
+    private final MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
     // TODO convert calls to asynchronous
     public RssFragmentViewModel(@NonNull Application application, NewsStation news) {
